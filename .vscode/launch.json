@@ -8,8 +8,9 @@
             "name": "etl",
             "type": "debugpy",
             "request": "launch",
+            "cwd": "${workspaceFolder}/etl/",
             "envFile": "${workspaceFolder}/etl/.env",
-            "program": "${workspaceFolder}/etl/main.py",
+            "program": "main.py",
             "console": "integratedTerminal"
         }
     ]

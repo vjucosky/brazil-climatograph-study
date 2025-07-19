@@ -108,3 +108,39 @@ WHERE STATION_ID IN (
 	SELECT WEATHER_STATION_ID
 	FROM #INTEREST_POINT_WEATHER_STATION
 )
+
+-- Exportação 3 - consolidado geral de leituras:
+SELECT
+	WS.[NAME] AS Estação,
+	WS.[STATE] AS Estado,
+	WS.ALTITUDE AS Altitude,
+	CAST(WS.LATITUDE AS float) AS Latitude,
+	CAST(WS.LONGITUDE AS float) AS Longitude,
+	FORMAT(WS.FOUNDED_AT, 'dd/MM/yyyy') AS [Data de fundação],
+	WSRM.TOTAL_PRECIPITATION AS [Precipitação total],
+	WSRM.MAXIMUM_PRECIPITATION_CHANGE AS [Variação máxima de precipitação],
+	WSRM.MINIMUM_PRESSURE AS [Pressão mínima],
+	WSRM.AVERAGE_PRESSURE AS [Pressão média],
+	WSRM.MAXIMUM_PRESSURE AS [Pressão máxima],
+	WSRM.MAXIMUM_PRESSURE_CHANGE AS [Variação máxima de pressão],
+	WSRM.TOTAL_RADIATION AS [Radiação total],
+	WSRM.MAXIMUM_RADIATION AS [Radiação máxima],
+	WSRM.MAXIMUM_RADIATION_CHANGE AS [Variação máxima de radiação],
+	WSRM.MINIMUM_DRY_AIR_TEMPERATURE AS [Temperatura mínima - bulbo seco],
+	WSRM.AVERAGE_DRY_AIR_TEMPERATURE AS [Temperatura média - bulbo seco],
+	WSRM.MAXIMUM_DRY_AIR_TEMPERATURE AS [Temperatura máxima - bulbo seco],
+	WSRM.MAXIMUM_DRY_AIR_TEMPERATURE_CHANGE AS [Variação máxima de temperatura - bulbo seco],
+	WSRM.MINIMUM_WET_AIR_TEMPERATURE AS [Temperatura mínima - ponto de orvalho],
+	WSRM.AVERAGE_WET_AIR_TEMPERATURE AS [Temperatura média - ponto de orvalho],
+	WSRM.MAXIMUM_WET_AIR_TEMPERATURE AS [Temperatura máxima - ponto de orvalho],
+	WSRM.MAXIMUM_WET_AIR_TEMPERATURE_CHANGE AS [Variação máxima de temperatura - ponto de orvalho],
+	WSRM.MINIMUM_RELATIVE_HUMIDITY AS [Umidade relativa mínima],
+	WSRM.AVERAGE_RELATIVE_HUMIDITY AS [Umidade relativa média],
+	WSRM.MAXIMUM_RELATIVE_HUMIDITY AS [Umidade relativa máxima],
+	WSRM.MAXIMUM_RELATIVE_HUMIDITY_CHANGE AS [Variação máxima de umidade relativa],
+	WSRM.MAXIMUM_WIND_GUST AS [Rajada do vento máxima],
+	WSRM.MAXIMUM_WIND_SPEED AS [Velocidade do vento máxima],
+	FORMAT(WSRM.REFERENCE_DATE, 'dd/MM/yyyy') AS [Data]
+FROM WEATHER_STATION AS WS
+LEFT JOIN WEATHER_STATION_READING_METRIC AS WSRM -- Para ver a definição da view, veja o arquivo DDL.sql
+	ON WS.ID = WSRM.STATION_ID

@@ -1,7 +1,7 @@
 import requests
 
 
-from settings import DATABASE_SETTINGS, BDMET_ARCHIVE_BASE_URL, STAGE_FOLDER, ARCHIVE_FOLDER
+from settings import DATABASE_SETTINGS, BDMEP_ARCHIVE_BASE_URL, STAGE_FOLDER, ARCHIVE_FOLDER
 from sqlalchemy import Engine, create_engine, text
 from datetime import datetime
 from zipfile import ZipFile
@@ -10,15 +10,15 @@ from shutil import rmtree
 from io import BytesIO
 
 
-bdmet_line_parser = lambda x: x.split(':;')[1].strip()
+bdmep_line_parser = lambda x: x.split(':;')[1].strip()
 
-def bdmet_float_parser(value: str):
+def bdmep_float_parser(value: str):
     try:
         return float(value.replace(',', '.'))
     except ValueError:
         return None
 
-def bdmet_date_parser(value: str):
+def bdmep_date_parser(value: str):
     for pattern in ['%Y-%m-%d', '%d/%m/%y']:
         try:
             return datetime.strptime(value, pattern).date()
@@ -28,7 +28,7 @@ def bdmet_date_parser(value: str):
 def load_historical_data(engine: Engine, year: int):
     print(f'Downloading historical data for year {year}')
 
-    request = requests.get(BDMET_ARCHIVE_BASE_URL.format(year=year))
+    request = requests.get(BDMEP_ARCHIVE_BASE_URL.format(year=year))
 
     with ZipFile(BytesIO(request.content)) as archive:
        archive.extractall(STAGE_FOLDER)
@@ -38,14 +38,14 @@ def load_historical_data(engine: Engine, year: int):
 
         data = file.open(encoding='ISO-8859-1')
 
-        region = bdmet_line_parser(data.readline())
-        state = bdmet_line_parser(data.readline())
-        name = bdmet_line_parser(data.readline())
-        code = bdmet_line_parser(data.readline())
-        latitude = bdmet_float_parser(bdmet_line_parser(data.readline()))
-        longitude = bdmet_float_parser(bdmet_line_parser(data.readline()))
-        altitude = bdmet_float_parser(bdmet_line_parser(data.readline()))
-        founded_at = bdmet_date_parser(bdmet_line_parser(data.readline()))
+        region = bdmep_line_parser(data.readline())
+        state = bdmep_line_parser(data.readline())
+        name = bdmep_line_parser(data.readline())
+        code = bdmep_line_parser(data.readline())
+        latitude = bdmep_float_parser(bdmep_line_parser(data.readline()))
+        longitude = bdmep_float_parser(bdmep_line_parser(data.readline()))
+        altitude = bdmep_float_parser(bdmep_line_parser(data.readline()))
+        founded_at = bdmep_date_parser(bdmep_line_parser(data.readline()))
 
         data.seek(0)
 

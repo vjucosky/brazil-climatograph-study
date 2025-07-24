@@ -1,0 +1,7 @@
+__pycache__/
+.venv/
+
+/etl/archive/*
+/etl/stage/*
+
+/output/*

@@ -1,12 +1,11 @@
 # Estudo climatográfico do Brasil
 
-Este repositório contém os artefatos necessários para o estudo climatográfico do Brasil, que utiliza dados extraídos do [Banco de Dados Meteorológicos do INMET (BDMEP)](https://bdmep.inmet.gov.br/). O estudo está disponível no Tableau Public em _.
+Este repositório contém os artefatos necessários para o estudo climatográfico do Brasil, que utiliza dados extraídos do [Banco de Dados Meteorológicos do INMET (BDMEP)](https://portal.inmet.gov.br/servicos/bdmep-dados-históricos).
 
 O repositório está organizado da seguinte maneira:
 
 * `/sql/`: scripts T-SQL para a criação do banco de dados e das tabelas necessárias e querys de extração.
 * `/etl/`: script Python para download e carga dos dados a partir do website do BDMEP.
-* `/viz/`: pastas de trabalho do Tableau.
 * `/doc/`: assets da documentação.
 
 ### Configuração do banco de dados
@@ -40,4 +39,4 @@ Os arquivos baixados são salvos temporariamente na pasta `/etl/stage/` e, confo
 
 ### Exportação dos resultados
 
-O Tableau Public não oferece conector ao SQL Server; assim é necessário exportar os dados em formato CSV. As consultas utilizadas estão disponíveis no arquivo `/sql/DML.sql`. Os arquivos são exportados para a pasta `/output/` mas, devido ao tamanho final (~750 MB), não foram incluídos no repositório.
+As consultas utilizadas estão disponíveis no arquivo `/sql/DML.sql`. Os arquivos são exportados para a pasta `/output/` mas, devido ao tamanho final (~750 MB), não foram incluídos no repositório.

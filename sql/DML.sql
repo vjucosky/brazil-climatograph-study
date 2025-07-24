@@ -1,17 +1,18 @@
 /*
    Esse arquivo contém querys para uma análise exploratória do BDMEP e consultas para exportação de dados para uso
-   no Tableau.
+   na ferramenta de visualização.
    
    Devido ao tamanho da base, optou-se por utilizar o analítico das leituras (salvas em intervalos de 1 hora) somente
    para as 3 estações meteorológicas mais próximas de cada "ponto de interesse" do autor. As demais estações
    meteorólogicas terão suas leituras agrupadas em granulometria diária para um overview do país como um todo.
 
-   Ao final da execução, teremos 3 bases de dados para consumo no Tableau:
+   Ao final da execução, teremos 3 bases de dados para consumo:
    - Pontos de interesse e estações meteorológicas próximas;
    - Analítico das leituras meteorológicas das estações próximas aos pontos de interesse; e
    - Consolidado geral de leituras.
 
-   O relacionamento entre os pontos de interesse e as leituras será realizado no Tableau através do ID da estação.
+   O relacionamento entre os pontos de interesse e as leituras será realizado na ferramenta de visualização através
+   do ID da estação.
 */
 
 -- Pontos de interesse do autor:

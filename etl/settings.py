@@ -7,8 +7,6 @@ DATABASE_SETTINGS = {
     'fast_executemany': True
 }
 
-BDMEP_ARCHIVE_BASE_URL = 'https://portal.inmet.gov.br/uploads/dadoshistoricos/{year}.zip'
-
 STAGE_FOLDER = Path('./stage/')
 
 ARCHIVE_FOLDER = Path('./archive/')

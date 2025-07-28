@@ -1,7 +1,7 @@
 import requests
 
 
-from settings import DATABASE_SETTINGS, BDMEP_ARCHIVE_BASE_URL, STAGE_FOLDER, ARCHIVE_FOLDER
+from settings import DATABASE_SETTINGS, STAGE_FOLDER, ARCHIVE_FOLDER
 from sqlalchemy import Engine, create_engine, text
 from datetime import datetime
 from zipfile import ZipFile
@@ -28,7 +28,7 @@ def bdmep_date_parser(value: str):
 def load_historical_data(engine: Engine, year: int):
     print(f'Downloading historical data for year {year}')
 
-    request = requests.get(BDMEP_ARCHIVE_BASE_URL.format(year=year))
+    request = requests.get(f'https://portal.inmet.gov.br/uploads/dadoshistoricos/{year}.zip')
 
     with ZipFile(BytesIO(request.content)) as archive:
        archive.extractall(STAGE_FOLDER)

@@ -1,10 +1,10 @@
 # Estudo climatográfico do Brasil
 
-Este repositório contém os artefatos necessários para o estudo climatográfico do Brasil, que utiliza dados extraídos do [Banco de Dados Meteorológicos do INMET (BDMEP)](https://portal.inmet.gov.br/servicos/bdmep-dados-históricos).
+Este repositório contém os artefatos do estudo climatográfico do Brasil, que utiliza dados extraídos do [Banco de Dados Meteorológicos do INMET (BDMEP)](https://portal.inmet.gov.br/servicos/bdmep-dados-históricos).
 
 O repositório está organizado da seguinte maneira:
 
-* `/sql/`: scripts T-SQL para a criação do banco de dados e das tabelas necessárias e querys de extração.
+* `/sql/`: scripts T-SQL para a criação das estruturas de dados.
 * `/etl/`: script Python para download e carga dos dados a partir do website do BDMEP.
 * `/doc/`: assets da documentação.
 
@@ -16,9 +16,9 @@ O ETL realiza a carga dos arquivos CSV extraídos do portal BDMEP em um banco de
 docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=my_super_secret_password" -n sql-server -p 1433:1433 -d --name sql-server mcr.microsoft.com/mssql/server:2022-latest
 ```
 
-Após a subida da instância, execute o script disponível em `/sql/DDL.sql` para criar o banco de dados e as tabelas necessárias.
+Após a subida da instância, execute o script disponível em `/sql/DDL.sql` para criar os objetos necessários.
 
-![ER](/doc/ER.png)
+![data_structure](/doc/data_structure.png)
 
 ### Execução do ETL
 
@@ -32,11 +32,17 @@ Antes de iniciar o ETL, atualize o arquivo `/etl/.env` com as credenciais do ban
 
 Os arquivos baixados são salvos temporariamente na pasta `/etl/stage/` e, conforme são carregados para o banco de dados, são movidos para a pasta `/etl/archive/`.
 
-![Dataflow](/doc/Dataflow.png)
-
 > [!NOTE]
 > Ao executar o ETL como configurado (abrangendo os anos de 2000 a 2024), será baixado aproximadamente 6,7 GB.
 
-### Exportação dos resultados
+### Consolidação dos resultados
 
-As consultas utilizadas estão disponíveis no arquivo `/sql/DML.sql`. Os arquivos são exportados para a pasta `/output/` mas, devido ao tamanho final (~750 MB), não foram incluídos no repositório.
+Devido ao tamanho da base, optou-se por utilizar o analítico das leituras (salvas em intervalos de 1 hora) somente para as 3 estações meteorológicas mais próximas de cada "ponto de interesse" do autor. As demais estações meteorólogicas terão suas leituras agrupadas em granulometria diária para um overview do país como um todo.
+
+Ao final da execução, teremos 3 bases de dados para consumo:
+
+1. Pontos de interesse e estações meteorológicas próximas;
+2. Analítico das leituras meteorológicas das estações próximas aos pontos de interesse; e
+3. Consolidado geral de leituras.
+
+As consultas utilizadas estão disponíveis no arquivo `/sql/DML.sql`.

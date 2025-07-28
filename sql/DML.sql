@@ -1,21 +1,9 @@
+USE STUDY
+
 /*
-   Esse arquivo contém querys para uma análise exploratória do BDMEP e consultas para exportação de dados para uso
-   na ferramenta de visualização.
-   
-   Devido ao tamanho da base, optou-se por utilizar o analítico das leituras (salvas em intervalos de 1 hora) somente
-   para as 3 estações meteorológicas mais próximas de cada "ponto de interesse" do autor. As demais estações
-   meteorólogicas terão suas leituras agrupadas em granulometria diária para um overview do país como um todo.
-
-   Ao final da execução, teremos 3 bases de dados para consumo:
-   - Pontos de interesse e estações meteorológicas próximas;
-   - Analítico das leituras meteorológicas das estações próximas aos pontos de interesse; e
-   - Consolidado geral de leituras.
-
-   O relacionamento entre os pontos de interesse e as leituras será realizado na ferramenta de visualização através
-   do ID da estação.
+	Pontos de interesse e estações meteorológicas mais próximas.
 */
 
--- Pontos de interesse do autor:
 CREATE TABLE #INTEREST_POINT (
 	ID bigint IDENTITY(1, 1) NOT NULL,
 	[NAME] varchar(255) NOT NULL,
@@ -35,7 +23,6 @@ INSERT INTO #INTEREST_POINT ([NAME], LATITUDE, LONGITUDE) VALUES
 	('Oásis', -22.412453, -47.523687),
 	('Primeiro amor', -25.581080, -49.396755)
 	
--- Encontrando as 3 estações meteorológicas mais próximas de cada ponto de interesse e suas distâncias:
 SELECT *
 INTO #INTEREST_POINT_WEATHER_STATION
 FROM (
@@ -55,7 +42,6 @@ ORDER BY
 	INTEREST_POINT_ID,
 	[CLASSIFICATION]
 
--- Familiarizando-se com os resultados a nível de estação meteorológica:
 SELECT
 	IPWS.INTEREST_POINT_ID,
 	[IP].[NAME] AS INTEREST_POINT_NAME,
@@ -73,7 +59,10 @@ INNER JOIN #INTEREST_POINT_WEATHER_STATION AS IPWS
 INNER JOIN WEATHER_STATION AS WS
 	ON IPWS.WEATHER_STATION_ID = WS.ID
 
--- Exportação 1 - pontos de interesse e estações meteorológicas próximas:
+/*
+	Consultas para exportação dos resultados.
+*/
+
 SELECT
 	IPWS.INTEREST_POINT_ID AS [ID do ponto de interesse],
 	[IP].[NAME] AS [Ponto de interesse],
@@ -91,7 +80,6 @@ INNER JOIN #INTEREST_POINT_WEATHER_STATION AS IPWS
 INNER JOIN WEATHER_STATION AS WS
 	ON IPWS.WEATHER_STATION_ID = WS.ID
 
--- Exportação 2 - analítico das leituras meteorológicas das estações próximas aos pontos de interesse:
 SELECT
 	STATION_ID AS [ID da estação],
 	PRECIPITATION AS Precipitação,
@@ -110,7 +98,6 @@ WHERE STATION_ID IN (
 	FROM #INTEREST_POINT_WEATHER_STATION
 )
 
--- Exportação 3 - consolidado geral de leituras:
 SELECT
 	WS.[NAME] AS Estação,
 	WS.[STATE] AS Estado,
@@ -143,5 +130,5 @@ SELECT
 	WSRM.MAXIMUM_WIND_SPEED AS [Velocidade do vento máxima],
 	FORMAT(WSRM.REFERENCE_DATE, 'dd/MM/yyyy') AS [Data]
 FROM WEATHER_STATION AS WS
-LEFT JOIN WEATHER_STATION_READING_METRIC AS WSRM -- Para ver a definição da view, veja o arquivo DDL.sql
+LEFT JOIN WEATHER_STATION_READING_METRIC AS WSRM
 	ON WS.ID = WSRM.STATION_ID

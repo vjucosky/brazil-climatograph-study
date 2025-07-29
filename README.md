@@ -8,6 +8,12 @@ O repositório está organizado da seguinte maneira:
 * `/etl/`: script Python para download e carga dos dados a partir do website do BDMEP.
 * `/doc/`: assets da documentação.
 
+Todos os scripts foram desenvolvidos em Python 3.11. Para instalar as dependências, execute:
+
+```
+pip install -r requirements.txt
+```
+
 ### Configuração do banco de dados
 
 O ETL realiza a carga dos arquivos CSV extraídos do portal BDMEP em um banco de dados SQL Server. Para criar uma instância do SQL Server como desenvolvedor utilizando o Docker, execute:
@@ -21,12 +27,6 @@ Após a subida da instância, execute o script disponível em `/sql/DDL.sql` par
 ![data_structure](/doc/data_structure.png)
 
 ### Execução do ETL
-
-O ETL foi desenvolvido em Python 3.11. Para instalar as dependências necessárias, execute:
-
-```
-pip install -r /etl/requirements.txt
-```
 
 Antes de iniciar o ETL, atualize o arquivo `/etl/.env` com as credenciais do banco de dados criado anteriormente. A execução se dá pelo arquivo `/etl/main.py`.
 

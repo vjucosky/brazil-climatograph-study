@@ -1,0 +1,90 @@
+SELECT
+	IPWS.INTEREST_POINT_ID,
+	[IP].[NAME] AS INTEREST_POINT_NAME,
+	IPWS.WEATHER_STATION_ID,
+	IPWS.[CLASSIFICATION],
+	IPWS.DISTANCE,
+	WS.CODE,
+	WS.[NAME],
+	WS.[STATE],
+	WS.ALTITUDE,
+	WS.FOUNDED_AT
+FROM #INTEREST_POINT AS [IP]
+INNER JOIN #INTEREST_POINT_WEATHER_STATION AS IPWS
+	ON [IP].ID = IPWS.INTEREST_POINT_ID
+INNER JOIN WEATHER_STATION AS WS
+	ON IPWS.WEATHER_STATION_ID = WS.ID
+
+/*
+	Consultas para exportação dos resultados.
+*/
+
+SELECT
+	IPWS.INTEREST_POINT_ID AS [ID do ponto de interesse],
+	[IP].[NAME] AS [Ponto de interesse],
+	IPWS.WEATHER_STATION_ID AS [ID da estação],
+	IPWS.[CLASSIFICATION] AS Classificação,
+	IPWS.DISTANCE AS Distância,
+	WS.[NAME] AS Estação,
+	WS.[STATE] AS Estado,
+	CAST(WS.LATITUDE AS float) AS [Latitude da estação],
+	CAST(WS.LONGITUDE AS float) AS [Longitude da estação],
+	FORMAT(WS.FOUNDED_AT, 'dd/MM/yyyy') AS [Data de fundação]
+FROM #INTEREST_POINT AS [IP]
+INNER JOIN #INTEREST_POINT_WEATHER_STATION AS IPWS
+	ON [IP].ID = IPWS.INTEREST_POINT_ID
+INNER JOIN WEATHER_STATION AS WS
+	ON IPWS.WEATHER_STATION_ID = WS.ID
+
+SELECT
+	STATION_ID AS [ID da estação],
+	PRECIPITATION AS Precipitação,
+	PRESSURE AS Pressão,
+	RADIATION AS Radiação,
+	DRY_AIR_TEMPERATURE AS [Temperatura - bulbo seco],
+	WET_AIR_TEMPERATURE AS [Temperatura - ponto de orvalho],
+	RELATIVE_HUMIDITY AS [Umidade relativa],
+	WIND_DIRECTION AS [Direção do vento],
+	WIND_GUST AS [Rajada do vento],
+	WIND_SPEED AS [Velocidade do vento],
+	FORMAT([TIMESTAMP], 'dd/MM/yyyy HH:mm:ss') AS Horário
+FROM WEATHER_STATION_READING
+WHERE STATION_ID IN (
+	SELECT WEATHER_STATION_ID
+	FROM #INTEREST_POINT_WEATHER_STATION
+)
+
+SELECT
+	WS.[NAME] AS Estação,
+	WS.[STATE] AS Estado,
+	WS.ALTITUDE AS Altitude,
+	CAST(WS.LATITUDE AS float) AS Latitude,
+	CAST(WS.LONGITUDE AS float) AS Longitude,
+	FORMAT(WS.FOUNDED_AT, 'dd/MM/yyyy') AS [Data de fundação],
+	WSRM.TOTAL_PRECIPITATION AS [Precipitação total],
+	WSRM.MAXIMUM_PRECIPITATION_CHANGE AS [Variação máxima de precipitação],
+	WSRM.MINIMUM_PRESSURE AS [Pressão mínima],
+	WSRM.AVERAGE_PRESSURE AS [Pressão média],
+	WSRM.MAXIMUM_PRESSURE AS [Pressão máxima],
+	WSRM.MAXIMUM_PRESSURE_CHANGE AS [Variação máxima de pressão],
+	WSRM.TOTAL_RADIATION AS [Radiação total],
+	WSRM.MAXIMUM_RADIATION AS [Radiação máxima],
+	WSRM.MAXIMUM_RADIATION_CHANGE AS [Variação máxima de radiação],
+	WSRM.MINIMUM_DRY_AIR_TEMPERATURE AS [Temperatura mínima - bulbo seco],
+	WSRM.AVERAGE_DRY_AIR_TEMPERATURE AS [Temperatura média - bulbo seco],
+	WSRM.MAXIMUM_DRY_AIR_TEMPERATURE AS [Temperatura máxima - bulbo seco],
+	WSRM.MAXIMUM_DRY_AIR_TEMPERATURE_CHANGE AS [Variação máxima de temperatura - bulbo seco],
+	WSRM.MINIMUM_WET_AIR_TEMPERATURE AS [Temperatura mínima - ponto de orvalho],
+	WSRM.AVERAGE_WET_AIR_TEMPERATURE AS [Temperatura média - ponto de orvalho],
+	WSRM.MAXIMUM_WET_AIR_TEMPERATURE AS [Temperatura máxima - ponto de orvalho],
+	WSRM.MAXIMUM_WET_AIR_TEMPERATURE_CHANGE AS [Variação máxima de temperatura - ponto de orvalho],
+	WSRM.MINIMUM_RELATIVE_HUMIDITY AS [Umidade relativa mínima],
+	WSRM.AVERAGE_RELATIVE_HUMIDITY AS [Umidade relativa média],
+	WSRM.MAXIMUM_RELATIVE_HUMIDITY AS [Umidade relativa máxima],
+	WSRM.MAXIMUM_RELATIVE_HUMIDITY_CHANGE AS [Variação máxima de umidade relativa],
+	WSRM.MAXIMUM_WIND_GUST AS [Rajada do vento máxima],
+	WSRM.MAXIMUM_WIND_SPEED AS [Velocidade do vento máxima],
+	FORMAT(WSRM.REFERENCE_DATE, 'dd/MM/yyyy') AS [Data]
+FROM WEATHER_STATION AS WS
+LEFT JOIN WEATHER_STATION_READING_METRIC AS WSRM
+	ON WS.ID = WSRM.STATION_ID

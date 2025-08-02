@@ -22,9 +22,7 @@ O ETL realiza a carga dos arquivos CSV extraídos do portal BDMEP em um banco de
 docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=my_super_secret_password" -n sql-server -p 1433:1433 -d --name sql-server mcr.microsoft.com/mssql/server:2022-latest
 ```
 
-Após a subida da instância, execute o script disponível em `/sql/DDL.sql` para criar os objetos necessários.
-
-![data_structure](/doc/data_structure.png)
+![data_structure_weather_station](/doc/data_structure_weather_station.png)
 
 ### Execução do ETL
 
@@ -37,7 +35,7 @@ Os arquivos baixados são salvos temporariamente na pasta `/etl/stage/` e, confo
 
 ### Consolidação dos resultados
 
-Devido ao tamanho da base, optou-se por utilizar o analítico das leituras (salvas em intervalos de 1 hora) somente para as 3 estações meteorológicas mais próximas de cada "ponto de interesse" do autor. As demais estações meteorólogicas terão suas leituras agrupadas em granulometria diária para um overview do país como um todo.
+Devido ao tamanho da base, optou-se por utilizar o analítico das leituras (salvas em intervalos de 1 hora) somente para as 3 estações meteorológicas mais próximas de cada "ponto de interesse" do autor. As demais estações meteorólogicas terão suas leituras agrupadas na granulometria diária para um overview do país como um todo.
 
 Ao final da execução, teremos 3 bases de dados para consumo:
 
@@ -45,4 +43,4 @@ Ao final da execução, teremos 3 bases de dados para consumo:
 2. Analítico das leituras meteorológicas das estações próximas aos pontos de interesse; e
 3. Consolidado geral de leituras.
 
-As consultas utilizadas estão disponíveis no arquivo `/sql/DML.sql`.
+As consultas utilizadas estão disponíveis no arquivo `/sql/DATAVIZ.sql`.
